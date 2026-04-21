@@ -44,14 +44,7 @@ namespace EZMAKER {
         pins.digitalWritePin(<number>pin, value);
     }
 
-    //% block="네오픽셀"
-    //% icon="\uf0eb"
-    //% color="#2699BF"
-    //% weight=90
-    export namespace neopixels {
-
-    export enum NeoPixelType {
-        //% block="1 LED"
+    //% block="1 LED"
         Single = 1,
         //% block="Bar (7 LEDs)"
         Bar = 7,
@@ -78,6 +71,7 @@ namespace EZMAKER {
     //% pin.fieldEditor="gridpicker"
     //% pin.fieldOptions.columns=3
     //% weight=80
+    //% subcategory="네오픽셀"
     export function setNeoPixelColorAll(npType: NeoPixelType, pin: EZDigitalPin, color: number): void {
         let strip = getNeoPixelStrip(pin, npType);
         strip.showColor(color);
@@ -92,6 +86,7 @@ namespace EZMAKER {
     //% pin.fieldEditor="gridpicker"
     //% pin.fieldOptions.columns=3
     //% weight=79
+    //% subcategory="네오픽셀"
     export function setNeoPixelPixelColor(npType: NeoPixelType, pin: EZDigitalPin, index: number, color: number): void {
         let strip = getNeoPixelStrip(pin, npType);
         strip.setPixelColor(index, color);
@@ -107,6 +102,7 @@ namespace EZMAKER {
     //% pin.fieldEditor="gridpicker"
     //% pin.fieldOptions.columns=3
     //% weight=78
+    //% subcategory="네오픽셀"
     export function setNeoPixelBrightness(npType: NeoPixelType, pin: EZDigitalPin, brightness: number): void {
         let strip = getNeoPixelStrip(pin, npType);
         // MakeCode neopixel 내부 로직상 brightness를 설정하면 다시 그려야 합니다.
@@ -122,6 +118,7 @@ namespace EZMAKER {
     //% pin.fieldEditor="gridpicker"
     //% pin.fieldOptions.columns=3
     //% weight=77
+    //% subcategory="네오픽셀"
     export function clearNeoPixel(npType: NeoPixelType, pin: EZDigitalPin): void {
         let strip = getNeoPixelStrip(pin, npType);
         strip.clear();
@@ -143,6 +140,7 @@ namespace EZMAKER {
     //% c7.shadow="colorNumberPicker" c7.defl=0x8A2BE2
     //% pin.fieldEditor="gridpicker" pin.fieldOptions.columns=3
     //% weight=76
+    //% subcategory="네오픽셀"
     export function setNeoPixelBar(pin: EZDigitalPin, c1: number, c2: number, c3: number, c4: number, c5: number, c6: number, c7: number): void {
         let strip = getNeoPixelStrip(pin, NeoPixelType.Bar);
         strip.setPixelColor(0, c1);
@@ -175,6 +173,7 @@ namespace EZMAKER {
     //% c12.shadow="colorNumberPicker" c12.defl=0xFF00FF
     //% pin.fieldEditor="gridpicker" pin.fieldOptions.columns=3
     //% weight=75
+    //% subcategory="네오픽셀"
     export function setNeoPixelRing(pin: EZDigitalPin, c1: number, c2: number, c3: number, c4: number, c5: number, c6: number, c7: number, c8: number, c9: number, c10: number, c11: number, c12: number): void {
         let strip = getNeoPixelStrip(pin, NeoPixelType.Ring);
         strip.setPixelColor(0, c1);
@@ -204,6 +203,7 @@ namespace EZMAKER {
     //% pin.fieldEditor="gridpicker"
     //% pin.fieldOptions.columns=3
     //% weight=74
+    //% subcategory="네오픽셀"
     export function showNeoPixelRainbow(npType: NeoPixelType, pin: EZDigitalPin, startHue: number = 1, endHue: number = 360): void {
         let strip = getNeoPixelStrip(pin, npType);
         strip.showRainbow(startHue, endHue);
@@ -220,6 +220,7 @@ namespace EZMAKER {
     //% pin.fieldEditor="gridpicker"
     //% pin.fieldOptions.columns=3
     //% weight=73
+    //% subcategory="네오픽셀"
     export function shiftNeoPixel(npType: NeoPixelType, pin: EZDigitalPin, offset: number = 1): void {
         let strip = getNeoPixelStrip(pin, npType);
         strip.shift(offset);
@@ -236,6 +237,7 @@ namespace EZMAKER {
     //% pin.fieldEditor="gridpicker"
     //% pin.fieldOptions.columns=3
     //% weight=72
+    //% subcategory="네오픽셀"
     export function rotateNeoPixel(npType: NeoPixelType, pin: EZDigitalPin, offset: number = 1): void {
         let strip = getNeoPixelStrip(pin, npType);
         strip.rotate(offset);
@@ -253,9 +255,9 @@ namespace EZMAKER {
     //% pin.fieldEditor="gridpicker"
     //% pin.fieldOptions.columns=3
     //% weight=71
+    //% subcategory="네오픽셀"
     export function showNeoPixelBarGraph(npType: NeoPixelType, pin: EZDigitalPin, value: number, high: number = 255): void {
         let strip = getNeoPixelStrip(pin, npType);
         strip.showBarGraph(value, high);
     }
-    } // End of neopixel namespace
 }
