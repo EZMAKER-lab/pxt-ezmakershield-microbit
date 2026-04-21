@@ -1,6 +1,6 @@
 {
     "name": "pxt-ezmakershield-microbit",
-    "version": "0.0.7",
+    "version": "0.0.8",
     "description": "MakeCode extension for EZmaker Micro:bit Shield blocks",
     "license": "MIT",
     "dependencies": {
@@ -11,7 +11,7 @@
         "README.md",
         "custom.ts",
         "test.ts",
-        "_locales/ko/ezmaker-strings.json"
+        "_locales/ko/pxt-ezmakershield-microbit-strings.json"
     ],
     "testFiles": [
         "test.ts"
