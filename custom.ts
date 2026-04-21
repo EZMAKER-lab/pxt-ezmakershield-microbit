@@ -92,7 +92,8 @@ namespace EZMAKER {
      * 지정한 핀의 네오픽셀 전체 색상을 설정합니다.
      */
     //% blockId="EZMAKER_neopixel_set_color_all"
-    //% block="set %npType neopixel on %pin to %color=neopixel_colors"
+    //% block="set %npType neopixel on %pin to %color"
+    //% color.shadow="colorNumberPicker"
     //% pin.fieldEditor="gridpicker"
     //% pin.fieldOptions.columns=3
     //% weight=80
@@ -106,7 +107,8 @@ namespace EZMAKER {
      * 네오픽셀의 특정 순번 LED 색상만 변경합니다.
      */
     //% blockId="EZMAKER_neopixel_set_pixel_color"
-    //% block="set %npType neopixel on %pin pixel at %index to %color=neopixel_colors"
+    //% block="set %npType neopixel on %pin pixel at %index to %color"
+    //% color.shadow="colorNumberPicker"
     //% pin.fieldEditor="gridpicker"
     //% pin.fieldOptions.columns=3
     //% weight=79
