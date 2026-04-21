@@ -30,6 +30,20 @@ namespace EZMAKER {
         P16 = DigitalPin.P16
     }
 
+    /**
+     * 지정한 핀의 디지털 출력을 제어합니다. (임시 부활: 서브메뉴 출력 목적)
+     * @param pin 디지털 전용 핀
+     * @param value 출력값 (0 또는 1)
+     */
+    //% blockId="ezmaker_write_digital"
+    //% block="set digital module on %pin to %value"
+    //% pin.fieldEditor="gridpicker"
+    //% pin.fieldOptions.columns=3
+    //% weight=99
+    export function writeDigitalPin(pin: EZDigitalPin, value: number): void {
+        pins.digitalWritePin(<number>pin, value);
+    }
+
     //% block="네오픽셀"
     //% icon="\uf0eb"
     //% color="#2699BF"

@@ -1,5 +1,6 @@
 {
-    "EZMAKER.EZPin.P0|block": "P0",
+    "EZMAKER.writeDigitalPin|block": "%pin 핀의 디지털 엑추에이터를 %value 로 제어(임시)",
+    "EZMAKER.EZAnalogPin.P0|block": "P0",
     "EZMAKER.EZPin.P1|block": "P1",
     "EZMAKER.EZPin.P2|block": "P2",
     "EZMAKER.EZPin.P8|block": "P8",
