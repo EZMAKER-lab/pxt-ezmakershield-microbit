@@ -220,4 +220,74 @@ namespace EZMAKER {
         strip.setPixelColor(11, c12);
         strip.show();
     }
+
+    /**
+     * 네오픽셀에 무지개 색상 효과를 띄웁니다.
+     * @param startHue 시작 색상 (1~360)
+     * @param endHue 끝 색상 (1~360)
+     */
+    //% blockId="EZMAKER_neopixel_show_rainbow"
+    //% block="show rainbow on %npType neopixel on %pin from %startHue to %endHue"
+    //% startHue.min=1 startHue.max=360 startHue.defl=1
+    //% endHue.min=1 endHue.max=360 endHue.defl=360
+    //% pin.fieldEditor="gridpicker"
+    //% pin.fieldOptions.columns=3
+    //% weight=74
+    //% group="Actuators"
+    export function showNeoPixelRainbow(npType: NeoPixelType, pin: EZDigitalPin, startHue: number = 1, endHue: number = 360): void {
+        let strip = getNeoPixelStrip(pin, npType);
+        strip.showRainbow(startHue, endHue);
+        strip.show();
+    }
+
+    /**
+     * 네오픽셀 색상을 지정한 칸 수만큼 밀어냅니다(Shift). 밀려난 자리는 꺼집니다.
+     * @param offset 이동시킬 칸 수
+     */
+    //% blockId="EZMAKER_neopixel_shift"
+    //% block="shift %npType neopixel on %pin by %offset"
+    //% offset.defl=1
+    //% pin.fieldEditor="gridpicker"
+    //% pin.fieldOptions.columns=3
+    //% weight=73
+    //% group="Actuators"
+    export function shiftNeoPixel(npType: NeoPixelType, pin: EZDigitalPin, offset: number = 1): void {
+        let strip = getNeoPixelStrip(pin, npType);
+        strip.shift(offset);
+        strip.show();
+    }
+
+    /**
+     * 네오픽셀 색상을 지정한 칸 수만큼 회전시킵니다(Rotate). 끝으로 간 색상은 처음으로 되돌아옵니다.
+     * @param offset 회전시킬 칸 수
+     */
+    //% blockId="EZMAKER_neopixel_rotate"
+    //% block="rotate %npType neopixel on %pin by %offset"
+    //% offset.defl=1
+    //% pin.fieldEditor="gridpicker"
+    //% pin.fieldOptions.columns=3
+    //% weight=72
+    //% group="Actuators"
+    export function rotateNeoPixel(npType: NeoPixelType, pin: EZDigitalPin, offset: number = 1): void {
+        let strip = getNeoPixelStrip(pin, npType);
+        strip.rotate(offset);
+        strip.show();
+    }
+
+    /**
+     * 측정값(센서값 등)을 최대치와 비교하여 막대그래프 형태로 표시합니다.
+     * @param value 현재 측정값
+     * @param high 측정 최대치
+     */
+    //% blockId="EZMAKER_neopixel_show_bar_graph"
+    //% block="show bar graph on %npType neopixel on %pin of %value up to %high"
+    //% high.defl=255
+    //% pin.fieldEditor="gridpicker"
+    //% pin.fieldOptions.columns=3
+    //% weight=71
+    //% group="Actuators"
+    export function showNeoPixelBarGraph(npType: NeoPixelType, pin: EZDigitalPin, value: number, high: number = 255): void {
+        let strip = getNeoPixelStrip(pin, npType);
+        strip.showBarGraph(value, high);
+    }
 }

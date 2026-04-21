@@ -17,5 +17,9 @@
     "EZMAKER.setNeoPixelBrightness|block": "%npType 네오픽셀(%pin) 밝기를 %brightness 로 설정",
     "EZMAKER.clearNeoPixel|block": "%npType 네오픽셀(%pin) 끄기",
     "EZMAKER.setNeoPixelBar|block": "BAR형 네오픽셀(%pin) 도색: %c1 %c2 %c3 %c4 %c5 %c6 %c7",
-    "EZMAKER.setNeoPixelRing|block": "링형 네오픽셀(%pin) 12구: %c1 %c2 %c3 %c4 %c5 %c6 %c7 %c8 %c9 %c10 %c11 %c12"
+    "EZMAKER.setNeoPixelRing|block": "링형 네오픽셀(%pin) 12구: %c1 %c2 %c3 %c4 %c5 %c6 %c7 %c8 %c9 %c10 %c11 %c12",
+    "EZMAKER.showNeoPixelRainbow|block": "%npType 네오픽셀(%pin) 무지개 효과 띄우기 (시작: %startHue 끝: %endHue)",
+    "EZMAKER.shiftNeoPixel|block": "%npType 네오픽셀(%pin) 색상을 %offset 칸 밀어내기(Shift)",
+    "EZMAKER.rotateNeoPixel|block": "%npType 네오픽셀(%pin) 색상을 %offset 칸 회전하기(Rotate)",
+    "EZMAKER.showNeoPixelBarGraph|block": "%npType 네오픽셀(%pin) 막대그래프 표시 (현재: %value 최대: %high)"
 }
