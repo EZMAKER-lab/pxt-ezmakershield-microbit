@@ -150,4 +150,56 @@ namespace EZMAKER {
         strip.clear();
         strip.show();
     }
+
+    /**
+     * BAR 네오픽셀 (7 LEDs) 의 각 픽셀 색상을 한 번에 지정합니다.
+     */
+    //% blockId="EZMAKER_neopixel_set_bar"
+    //% block="BAR neopixel on %pin : %c1 %c2 %c3 %c4 %c5 %c6 %c7"
+    //% inlineInputMode=inline
+    //% c1.shadow="colorNumberPicker" c2.shadow="colorNumberPicker" c3.shadow="colorNumberPicker"
+    //% c4.shadow="colorNumberPicker" c5.shadow="colorNumberPicker" c6.shadow="colorNumberPicker"
+    //% c7.shadow="colorNumberPicker"
+    //% pin.fieldEditor="gridpicker" pin.fieldOptions.columns=3
+    //% weight=76 group="Actuators"
+    export function setNeoPixelBar(pin: EZPin, c1: number, c2: number, c3: number, c4: number, c5: number, c6: number, c7: number): void {
+        let strip = getNeoPixelStrip(pin, NeoPixelType.Bar);
+        strip.setPixelColor(0, c1);
+        strip.setPixelColor(1, c2);
+        strip.setPixelColor(2, c3);
+        strip.setPixelColor(3, c4);
+        strip.setPixelColor(4, c5);
+        strip.setPixelColor(5, c6);
+        strip.setPixelColor(6, c7);
+        strip.show();
+    }
+
+    /**
+     * RING 네오픽셀 (12 LEDs) 의 각 픽셀 색상을 한 번에 지정합니다.
+     */
+    //% blockId="EZMAKER_neopixel_set_ring"
+    //% block="RING neopixel on %pin : %c1 %c2 %c3 %c4 %c5 %c6 %c7 %c8 %c9 %c10 %c11 %c12"
+    //% inlineInputMode=inline
+    //% c1.shadow="colorNumberPicker" c2.shadow="colorNumberPicker" c3.shadow="colorNumberPicker"
+    //% c4.shadow="colorNumberPicker" c5.shadow="colorNumberPicker" c6.shadow="colorNumberPicker"
+    //% c7.shadow="colorNumberPicker" c8.shadow="colorNumberPicker" c9.shadow="colorNumberPicker"
+    //% c10.shadow="colorNumberPicker" c11.shadow="colorNumberPicker" c12.shadow="colorNumberPicker"
+    //% pin.fieldEditor="gridpicker" pin.fieldOptions.columns=3
+    //% weight=75 group="Actuators"
+    export function setNeoPixelRing(pin: EZPin, c1: number, c2: number, c3: number, c4: number, c5: number, c6: number, c7: number, c8: number, c9: number, c10: number, c11: number, c12: number): void {
+        let strip = getNeoPixelStrip(pin, NeoPixelType.Ring);
+        strip.setPixelColor(0, c1);
+        strip.setPixelColor(1, c2);
+        strip.setPixelColor(2, c3);
+        strip.setPixelColor(3, c4);
+        strip.setPixelColor(4, c5);
+        strip.setPixelColor(5, c6);
+        strip.setPixelColor(6, c7);
+        strip.setPixelColor(7, c8);
+        strip.setPixelColor(8, c9);
+        strip.setPixelColor(9, c10);
+        strip.setPixelColor(10, c11);
+        strip.setPixelColor(11, c12);
+        strip.show();
+    }
 }

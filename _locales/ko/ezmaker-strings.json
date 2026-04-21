@@ -15,5 +15,7 @@
     "EZMAKER.setNeoPixelColorAll|block": "%npType 네오픽셀(%pin) 색상을 %color 로 설정",
     "EZMAKER.setNeoPixelPixelColor|block": "%npType 네오픽셀(%pin) 의 %index 번째 LED를 %color 불빛으로 켜기",
     "EZMAKER.setNeoPixelBrightness|block": "%npType 네오픽셀(%pin) 밝기를 %brightness 로 설정",
-    "EZMAKER.clearNeoPixel|block": "%npType 네오픽셀(%pin) 끄기"
+    "EZMAKER.clearNeoPixel|block": "%npType 네오픽셀(%pin) 끄기",
+    "EZMAKER.setNeoPixelBar|block": "BAR형 네오픽셀(%pin) 도색: %c1 %c2 %c3 %c4 %c5 %c6 %c7",
+    "EZMAKER.setNeoPixelRing|block": "링형 네오픽셀(%pin) 12구: %c1 %c2 %c3 %c4 %c5 %c6 %c7 %c8 %c9 %c10 %c11 %c12"
 }
