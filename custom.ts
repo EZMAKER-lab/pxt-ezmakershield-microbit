@@ -35,7 +35,7 @@ namespace EZMAKER {
     //% icon="\uf0eb"
     //% color="#2699BF"
     //% weight=90
-    export namespace neopixel {
+    export namespace neopixels {
 
     export enum NeoPixelType {
         //% block="1 LED"
