@@ -44,7 +44,8 @@ namespace EZMAKER {
         pins.digitalWritePin(<number>pin, value);
     }
 
-    //% block="1 LED"
+    export enum NeoPixelType {
+        //% block="1 LED"
         Single = 1,
         //% block="Bar (7 LEDs)"
         Bar = 7,
