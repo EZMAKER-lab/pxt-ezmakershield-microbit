@@ -31,49 +31,11 @@ namespace EZMAKER {
         P16 = DigitalPin.P16
     }
 
-    /**
-     * 지정한 핀의 아날로그 센서 값을 읽습니다. (DIY-A, 가스 등)
-     * @param pin 아날로그 입력을 지원하는 핀 (P0, P1, P2 등)
-     */
-    //% blockId="ezmaker_read_analog"
-    //% block="read analog sensor on %pin"
-    //% pin.fieldEditor="gridpicker"
-    //% pin.fieldOptions.columns=3
+    //% block="네오픽셀"
+    //% icon="\uf0eb"
+    //% color="#2699BF"
     //% weight=90
-    //% group="Analog & Digital"
-    export function readAnalogSensor(pin: EZAnalogPin): number {
-        // P0, P1, P2 등은 아날로그 핀으로 캐스팅하여 읽습니다.
-        return pins.analogReadPin(<AnalogPin><number>pin);
-    }
-
-    /**
-     * 지정한 핀의 디지털 센서 값을 읽습니다. (인체감지, 스위치 등)
-     * @param pin 디지털 입력 핀
-     */
-    //% blockId="ezmaker_read_digital"
-    //% block="read digital sensor on %pin"
-    //% pin.fieldEditor="gridpicker"
-    //% pin.fieldOptions.columns=3
-    //% weight=89
-    //% group="Analog & Digital"
-    export function readDigitalSensor(pin: EZDigitalPin): number {
-        return pins.digitalReadPin(<number>pin);
-    }
-
-    /**
-     * 지정한 핀의 디지털 출력을 제어합니다. (레이저, 부저 등 On/Off 제어용)
-     */
-    //% blockId="ezmaker_write_digital"
-    //% block="set digital module on %pin to %value"
-    //% pin.fieldEditor="gridpicker"
-    //% pin.fieldOptions.columns=3
-    //% weight=88
-    //% group="Analog & Digital"
-    export function writeDigitalModule(pin: EZDigitalPin, value: number): void {
-        pins.digitalWritePin(<number>pin, value);
-    }
-
-    // --- Phase 3: Actuators ---
+    export namespace neopixel {
 
     export enum NeoPixelType {
         //% block="1 LED"
@@ -290,4 +252,5 @@ namespace EZMAKER {
         let strip = getNeoPixelStrip(pin, npType);
         strip.showBarGraph(value, high);
     }
+    } // End of neopixel namespace
 }
