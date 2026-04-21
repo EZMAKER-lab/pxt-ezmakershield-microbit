@@ -26,6 +26,32 @@ namespace EZMAKER {
     }
 
     /**
+     * 아날로그 입력 전용 핀 (P0, P1, P2)
+     */
+    export enum EZAnalogPin {
+        //% block="P0"
+        P0 = AnalogPin.P0,
+        //% block="P1"
+        P1 = AnalogPin.P1,
+        //% block="P2"
+        P2 = AnalogPin.P2
+    }
+
+    /**
+     * 디지털 입출력 전용 핀 (P8, P12, P13, P16)
+     */
+    export enum EZDigitalPin {
+        //% block="P8"
+        P8 = DigitalPin.P8,
+        //% block="P12"
+        P12 = DigitalPin.P12,
+        //% block="P13"
+        P13 = DigitalPin.P13,
+        //% block="P16"
+        P16 = DigitalPin.P16
+    }
+
+    /**
      * 지정한 핀의 아날로그 센서 값을 읽습니다. (DIY-A, 가스 등)
      * @param pin 아날로그 입력을 지원하는 핀 (P0, P1, P2 등)
      */
@@ -35,7 +61,7 @@ namespace EZMAKER {
     //% pin.fieldOptions.columns=3
     //% weight=90
     //% group="Analog & Digital"
-    export function readAnalogSensor(pin: EZPin): number {
+    export function readAnalogSensor(pin: EZAnalogPin): number {
         // P0, P1, P2 등은 아날로그 핀으로 캐스팅하여 읽습니다.
         return pins.analogReadPin(<AnalogPin><number>pin);
     }
@@ -50,7 +76,7 @@ namespace EZMAKER {
     //% pin.fieldOptions.columns=3
     //% weight=89
     //% group="Analog & Digital"
-    export function readDigitalSensor(pin: EZPin): number {
+    export function readDigitalSensor(pin: EZDigitalPin): number {
         return pins.digitalReadPin(<number>pin);
     }
 
@@ -63,7 +89,7 @@ namespace EZMAKER {
     //% pin.fieldOptions.columns=3
     //% weight=88
     //% group="Analog & Digital"
-    export function writeDigitalModule(pin: EZPin, value: number): void {
+    export function writeDigitalModule(pin: EZDigitalPin, value: number): void {
         pins.digitalWritePin(<number>pin, value);
     }
 
