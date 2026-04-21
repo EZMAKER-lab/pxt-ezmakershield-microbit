@@ -6,26 +6,6 @@
 namespace EZMAKER {
 
     /**
-     * EZmaker 연결을 위한 아날로그/디지털 핀 종류
-     */
-    export enum EZPin {
-        //% block="P0"
-        P0 = DigitalPin.P0,
-        //% block="P1"
-        P1 = DigitalPin.P1,
-        //% block="P2"
-        P2 = DigitalPin.P2,
-        //% block="P8"
-        P8 = DigitalPin.P8,
-        //% block="P12"
-        P12 = DigitalPin.P12,
-        //% block="P13"
-        P13 = DigitalPin.P13,
-        //% block="P16"
-        P16 = DigitalPin.P16
-    }
-
-    /**
      * 아날로그 입력 전용 핀 (P0, P1, P2)
      */
     export enum EZAnalogPin {
@@ -106,7 +86,7 @@ namespace EZMAKER {
 
     let neopixelStrips: neopixel.Strip[] = [];
 
-    function getNeoPixelStrip(pin: EZPin, type: NeoPixelType): neopixel.Strip {
+    function getNeoPixelStrip(pin: EZDigitalPin, type: NeoPixelType): neopixel.Strip {
         let p = <number>pin;
         if (!neopixelStrips[p]) {
             neopixelStrips[p] = neopixel.create(p, <number>type, NeoPixelMode.RGB);
@@ -119,12 +99,12 @@ namespace EZMAKER {
      */
     //% blockId="EZMAKER_neopixel_set_color_all"
     //% block="set %npType neopixel on %pin to %color"
-    //% color.shadow="colorNumberPicker"
+    //% color.shadow="colorNumberPicker" color.defl=0x0000FF
     //% pin.fieldEditor="gridpicker"
     //% pin.fieldOptions.columns=3
     //% weight=80
     //% group="Actuators"
-    export function setNeoPixelColorAll(npType: NeoPixelType, pin: EZPin, color: number): void {
+    export function setNeoPixelColorAll(npType: NeoPixelType, pin: EZDigitalPin, color: number): void {
         let strip = getNeoPixelStrip(pin, npType);
         strip.showColor(color);
     }
@@ -134,12 +114,12 @@ namespace EZMAKER {
      */
     //% blockId="EZMAKER_neopixel_set_pixel_color"
     //% block="set %npType neopixel on %pin pixel at %index to %color"
-    //% color.shadow="colorNumberPicker"
+    //% color.shadow="colorNumberPicker" color.defl=0x0000FF
     //% pin.fieldEditor="gridpicker"
     //% pin.fieldOptions.columns=3
     //% weight=79
     //% group="Actuators"
-    export function setNeoPixelPixelColor(npType: NeoPixelType, pin: EZPin, index: number, color: number): void {
+    export function setNeoPixelPixelColor(npType: NeoPixelType, pin: EZDigitalPin, index: number, color: number): void {
         let strip = getNeoPixelStrip(pin, npType);
         strip.setPixelColor(index, color);
         strip.show();
@@ -155,7 +135,7 @@ namespace EZMAKER {
     //% pin.fieldOptions.columns=3
     //% weight=78
     //% group="Actuators"
-    export function setNeoPixelBrightness(npType: NeoPixelType, pin: EZPin, brightness: number): void {
+    export function setNeoPixelBrightness(npType: NeoPixelType, pin: EZDigitalPin, brightness: number): void {
         let strip = getNeoPixelStrip(pin, npType);
         // MakeCode neopixel 내부 로직상 brightness를 설정하면 다시 그려야 합니다.
         strip.setBrightness(brightness);
@@ -171,7 +151,7 @@ namespace EZMAKER {
     //% pin.fieldOptions.columns=3
     //% weight=77
     //% group="Actuators"
-    export function clearNeoPixel(npType: NeoPixelType, pin: EZPin): void {
+    export function clearNeoPixel(npType: NeoPixelType, pin: EZDigitalPin): void {
         let strip = getNeoPixelStrip(pin, npType);
         strip.clear();
         strip.show();
@@ -183,12 +163,16 @@ namespace EZMAKER {
     //% blockId="EZMAKER_neopixel_set_bar"
     //% block="BAR neopixel on %pin : %c1 %c2 %c3 %c4 %c5 %c6 %c7"
     //% inlineInputMode=inline
-    //% c1.shadow="colorNumberPicker" c2.shadow="colorNumberPicker" c3.shadow="colorNumberPicker"
-    //% c4.shadow="colorNumberPicker" c5.shadow="colorNumberPicker" c6.shadow="colorNumberPicker"
-    //% c7.shadow="colorNumberPicker"
+    //% c1.shadow="colorNumberPicker" c1.defl=0xFF0000
+    //% c2.shadow="colorNumberPicker" c2.defl=0xFF7F00
+    //% c3.shadow="colorNumberPicker" c3.defl=0xFFFF00
+    //% c4.shadow="colorNumberPicker" c4.defl=0x00FF00
+    //% c5.shadow="colorNumberPicker" c5.defl=0x0000FF
+    //% c6.shadow="colorNumberPicker" c6.defl=0x4B0082
+    //% c7.shadow="colorNumberPicker" c7.defl=0x8A2BE2
     //% pin.fieldEditor="gridpicker" pin.fieldOptions.columns=3
     //% weight=76 group="Actuators"
-    export function setNeoPixelBar(pin: EZPin, c1: number, c2: number, c3: number, c4: number, c5: number, c6: number, c7: number): void {
+    export function setNeoPixelBar(pin: EZDigitalPin, c1: number, c2: number, c3: number, c4: number, c5: number, c6: number, c7: number): void {
         let strip = getNeoPixelStrip(pin, NeoPixelType.Bar);
         strip.setPixelColor(0, c1);
         strip.setPixelColor(1, c2);
@@ -206,13 +190,21 @@ namespace EZMAKER {
     //% blockId="EZMAKER_neopixel_set_ring"
     //% block="RING neopixel on %pin : %c1 %c2 %c3 %c4 %c5 %c6 %c7 %c8 %c9 %c10 %c11 %c12"
     //% inlineInputMode=inline
-    //% c1.shadow="colorNumberPicker" c2.shadow="colorNumberPicker" c3.shadow="colorNumberPicker"
-    //% c4.shadow="colorNumberPicker" c5.shadow="colorNumberPicker" c6.shadow="colorNumberPicker"
-    //% c7.shadow="colorNumberPicker" c8.shadow="colorNumberPicker" c9.shadow="colorNumberPicker"
-    //% c10.shadow="colorNumberPicker" c11.shadow="colorNumberPicker" c12.shadow="colorNumberPicker"
+    //% c1.shadow="colorNumberPicker" c1.defl=0xFF0000
+    //% c2.shadow="colorNumberPicker" c2.defl=0xFF3F00
+    //% c3.shadow="colorNumberPicker" c3.defl=0xFF7F00
+    //% c4.shadow="colorNumberPicker" c4.defl=0xFFFF00
+    //% c5.shadow="colorNumberPicker" c5.defl=0x7FFF00
+    //% c6.shadow="colorNumberPicker" c6.defl=0x00FF00
+    //% c7.shadow="colorNumberPicker" c7.defl=0x00FF7F
+    //% c8.shadow="colorNumberPicker" c8.defl=0x00FFFF
+    //% c9.shadow="colorNumberPicker" c9.defl=0x0000FF
+    //% c10.shadow="colorNumberPicker" c10.defl=0x4B0082
+    //% c11.shadow="colorNumberPicker" c11.defl=0x8A2BE2
+    //% c12.shadow="colorNumberPicker" c12.defl=0xFF00FF
     //% pin.fieldEditor="gridpicker" pin.fieldOptions.columns=3
     //% weight=75 group="Actuators"
-    export function setNeoPixelRing(pin: EZPin, c1: number, c2: number, c3: number, c4: number, c5: number, c6: number, c7: number, c8: number, c9: number, c10: number, c11: number, c12: number): void {
+    export function setNeoPixelRing(pin: EZDigitalPin, c1: number, c2: number, c3: number, c4: number, c5: number, c6: number, c7: number, c8: number, c9: number, c10: number, c11: number, c12: number): void {
         let strip = getNeoPixelStrip(pin, NeoPixelType.Ring);
         strip.setPixelColor(0, c1);
         strip.setPixelColor(1, c2);
