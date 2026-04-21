@@ -1,0 +1,19 @@
+{
+    "EZMAKER.EZPin.P0|block": "P0",
+    "EZMAKER.EZPin.P1|block": "P1",
+    "EZMAKER.EZPin.P2|block": "P2",
+    "EZMAKER.EZPin.P8|block": "P8",
+    "EZMAKER.EZPin.P12|block": "P12",
+    "EZMAKER.EZPin.P13|block": "P13",
+    "EZMAKER.EZPin.P16|block": "P16",
+    "EZMAKER.NeoPixelType.Single|block": "1 LED",
+    "EZMAKER.NeoPixelType.Bar|block": "BAR형 (7 LEDs)",
+    "EZMAKER.NeoPixelType.Ring|block": "링형 (12 LEDs)",
+    "EZMAKER.readAnalogSensor|block": "%pin 핀의 아날로그 센서 값 읽기",
+    "EZMAKER.readDigitalSensor|block": "%pin 핀의 디지털 센서 값 읽기",
+    "EZMAKER.writeDigitalModule|block": "%pin 핀의 디지털 모듈을 %value 로 설정",
+    "EZMAKER.setNeoPixelColorAll|block": "%npType 네오픽셀(%pin) 색상을 %color 로 설정",
+    "EZMAKER.setNeoPixelPixelColor|block": "%npType 네오픽셀(%pin) 의 %index 번째 LED를 %color 불빛으로 켜기",
+    "EZMAKER.setNeoPixelBrightness|block": "%npType 네오픽셀(%pin) 밝기를 %brightness 로 설정",
+    "EZMAKER.clearNeoPixel|block": "%npType 네오픽셀(%pin) 끄기"
+}
