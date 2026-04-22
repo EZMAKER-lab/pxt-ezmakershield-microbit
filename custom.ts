@@ -261,4 +261,38 @@ namespace EZMAKER {
         let strip = getNeoPixelStrip(pin, npType);
         strip.showBarGraph(value, high);
     }
+
+    // =========================================================================
+    // 서보모터 메뉴
+    // =========================================================================
+
+    /**
+     * 지정한 핀의 서보모터 각도를 설정합니다 (0~180도).
+     * @param pin 디지털 전용 핀
+     * @param angle 회전시킬 각도 (0 - 180)
+     */
+    //% blockId="EZMAKER_servo_set_angle"
+    //% block="set servo on %pin angle to %angle"
+    //% angle.min=0 angle.max=180 angle.defl=90
+    //% pin.fieldEditor="gridpicker"
+    //% pin.fieldOptions.columns=3
+    //% weight=60
+    //% subcategory="서보모터"
+    export function setServoAngle(pin: EZDigitalPin, angle: number): void {
+        pins.servoWritePin(<number>pin, angle);
+    }
+
+    /**
+     * 지정한 핀의 서보모터 동작 신호(PWM)를 정지하여 힘을 뺍니다.
+     * @param pin 디지털 전용 핀
+     */
+    //% blockId="EZMAKER_servo_stop"
+    //% block="stop servo on %pin"
+    //% pin.fieldEditor="gridpicker"
+    //% pin.fieldOptions.columns=3
+    //% weight=59
+    //% subcategory="서보모터"
+    export function stopServo(pin: EZDigitalPin): void {
+        pins.servoSetPulse(<number>pin, 0);
+    }
 }
