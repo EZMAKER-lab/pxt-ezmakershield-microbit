@@ -16,18 +16,15 @@ namespace EZMAKER {
         P2 = AnalogPin.P2
     }
 
-    /**
-     * 디지털 입출력 전용 핀 (P8, P12, P13, P16)
-     */
     export enum EZDigitalPin {
         //% block="P8"
-        P8 = DigitalPin.P8,
+        P8 = 108,  // DigitalPin.P8
         //% block="P12"
-        P12 = DigitalPin.P12,
+        P12 = 112, // DigitalPin.P12
         //% block="P13"
-        P13 = DigitalPin.P13,
+        P13 = 113, // DigitalPin.P13
         //% block="P16"
-        P16 = DigitalPin.P16
+        P16 = 116  // DigitalPin.P16
     }
 
     /**
@@ -41,7 +38,12 @@ namespace EZMAKER {
     //% pin.fieldOptions.columns=3
     //% weight=99
     export function writeDigitalPin(pin: EZDigitalPin, value: number): void {
-        pins.digitalWritePin(<number>pin, value);
+        switch (<number>pin) {
+            case 108: pins.digitalWritePin(DigitalPin.P8, value); break;
+            case 112: pins.digitalWritePin(DigitalPin.P12, value); break;
+            case 113: pins.digitalWritePin(DigitalPin.P13, value); break;
+            case 116: pins.digitalWritePin(DigitalPin.P16, value); break;
+        }
     }
 
     export enum NeoPixelType {
@@ -279,7 +281,12 @@ namespace EZMAKER {
     //% weight=60
     //% subcategory="서보모터"
     export function setServoAngle(pin: EZDigitalPin, angle: number): void {
-        pins.servoWritePin(<number>pin, angle);
+        switch (<number>pin) {
+            case 108: pins.servoWritePin(AnalogPin.P8, angle); break;
+            case 112: pins.servoWritePin(AnalogPin.P12, angle); break;
+            case 113: pins.servoWritePin(AnalogPin.P13, angle); break;
+            case 116: pins.servoWritePin(AnalogPin.P16, angle); break;
+        }
     }
 
     /**
@@ -293,6 +300,11 @@ namespace EZMAKER {
     //% weight=59
     //% subcategory="서보모터"
     export function stopServo(pin: EZDigitalPin): void {
-        pins.servoSetPulse(<number>pin, 0);
+        switch (<number>pin) {
+            case 108: pins.servoSetPulse(AnalogPin.P8, 0); break;
+            case 112: pins.servoSetPulse(AnalogPin.P12, 0); break;
+            case 113: pins.servoSetPulse(AnalogPin.P13, 0); break;
+            case 116: pins.servoSetPulse(AnalogPin.P16, 0); break;
+        }
     }
 }
