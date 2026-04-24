@@ -263,48 +263,4 @@ namespace EZMAKER {
         let strip = getNeoPixelStrip(pin, npType);
         strip.showBarGraph(value, high);
     }
-
-    // =========================================================================
-    // 서보모터 메뉴
-    // =========================================================================
-
-    /**
-     * 지정한 핀의 서보모터 각도를 설정합니다 (0~180도).
-     * @param pin 디지털 전용 핀
-     * @param angle 회전시킬 각도 (0 - 180)
-     */
-    //% blockId="EZMAKER_servo_set_angle"
-    //% block="set servo on %pin angle to %angle"
-    //% angle.min=0 angle.max=180 angle.defl=90
-    //% pin.fieldEditor="gridpicker"
-    //% pin.fieldOptions.columns=3
-    //% weight=60
-    //% subcategory="서보모터"
-    export function setServoAngle(pin: EZDigitalPin, angle: number): void {
-        switch (<number>pin) {
-            case 108: pins.servoWritePin(AnalogPin.P8, angle); break;
-            case 112: pins.servoWritePin(AnalogPin.P12, angle); break;
-            case 113: pins.servoWritePin(AnalogPin.P13, angle); break;
-            case 116: pins.servoWritePin(AnalogPin.P16, angle); break;
-        }
-    }
-
-    /**
-     * 지정한 핀의 서보모터 동작 신호(PWM)를 정지하여 힘을 뺍니다.
-     * @param pin 디지털 전용 핀
-     */
-    //% blockId="EZMAKER_servo_stop"
-    //% block="stop servo on %pin"
-    //% pin.fieldEditor="gridpicker"
-    //% pin.fieldOptions.columns=3
-    //% weight=59
-    //% subcategory="서보모터"
-    export function stopServo(pin: EZDigitalPin): void {
-        switch (<number>pin) {
-            case 108: pins.servoSetPulse(AnalogPin.P8, 0); break;
-            case 112: pins.servoSetPulse(AnalogPin.P12, 0); break;
-            case 113: pins.servoSetPulse(AnalogPin.P13, 0); break;
-            case 116: pins.servoSetPulse(AnalogPin.P16, 0); break;
-        }
-    }
 }
