@@ -273,7 +273,7 @@ namespace EZMAKER {
      * @param port 연결 포트
      */
     //% blockId="EZMAKER_ultrasonic_distance"
-    //% block="초음파 센서 거리 (cm) | 연결포트 %port"
+    //% block="초음파 센서 (CS100A) 거리 (cm) | 연결포트 %port"
     //% port.fieldEditor="gridpicker" port.fieldOptions.columns=3
     //% weight=50
     //% subcategory="초음파 센서"
@@ -284,35 +284,35 @@ namespace EZMAKER {
             case 108:
                 pins.setPull(DigitalPin.P8, PinPullMode.PullNone);
                 pins.digitalWritePin(DigitalPin.P8, 0); control.waitMicros(2);
-                pins.digitalWritePin(DigitalPin.P8, 1); control.waitMicros(10);
+                pins.digitalWritePin(DigitalPin.P8, 1); control.waitMicros(20);
                 pins.digitalWritePin(DigitalPin.P8, 0);
-                d = pins.pulseIn(DigitalPin.P8, PulseValue.High, 25000);
+                d = pins.pulseIn(DigitalPin.P8, PulseValue.High, 50000);
                 break;
             case 112:
                 pins.setPull(DigitalPin.P12, PinPullMode.PullNone);
                 pins.digitalWritePin(DigitalPin.P12, 0); control.waitMicros(2);
-                pins.digitalWritePin(DigitalPin.P12, 1); control.waitMicros(10);
+                pins.digitalWritePin(DigitalPin.P12, 1); control.waitMicros(20);
                 pins.digitalWritePin(DigitalPin.P12, 0);
-                d = pins.pulseIn(DigitalPin.P12, PulseValue.High, 25000);
+                d = pins.pulseIn(DigitalPin.P12, PulseValue.High, 50000);
                 break;
             case 113:
                 pins.setPull(DigitalPin.P13, PinPullMode.PullNone);
                 pins.digitalWritePin(DigitalPin.P13, 0); control.waitMicros(2);
-                pins.digitalWritePin(DigitalPin.P13, 1); control.waitMicros(10);
+                pins.digitalWritePin(DigitalPin.P13, 1); control.waitMicros(20);
                 pins.digitalWritePin(DigitalPin.P13, 0);
-                d = pins.pulseIn(DigitalPin.P13, PulseValue.High, 25000);
+                d = pins.pulseIn(DigitalPin.P13, PulseValue.High, 50000);
                 break;
             case 116:
                 pins.setPull(DigitalPin.P16, PinPullMode.PullNone);
                 pins.digitalWritePin(DigitalPin.P16, 0); control.waitMicros(2);
-                pins.digitalWritePin(DigitalPin.P16, 1); control.waitMicros(10);
+                pins.digitalWritePin(DigitalPin.P16, 1); control.waitMicros(20);
                 pins.digitalWritePin(DigitalPin.P16, 0);
-                d = pins.pulseIn(DigitalPin.P16, PulseValue.High, 25000);
+                d = pins.pulseIn(DigitalPin.P16, PulseValue.High, 50000);
                 break;
         }
 
         // 거리가 너무 가깝거나(0) 에러일 경우 0을 반환, 아닐 경우 cm로 변환 (time / 58)
-        let distance = Math.idiv(d, 58);
+        let distance = Math.round(d / 58);
         return distance > 0 ? distance : 0;
     }
 }
