@@ -263,4 +263,55 @@ namespace EZMAKER {
         let strip = getNeoPixelStrip(pin, npType);
         strip.showBarGraph(value, high);
     }
+
+    // =========================================================================
+    // 초음파 센서 메뉴
+    // =========================================================================
+
+    /**
+     * 초음파 센서로 목표물까지의 거리를 측정합니다 (단위: cm).
+     * @param trig 트리거 핀 (신호 송신)
+     * @param echo 에코 핀 (신호 수신)
+     */
+    //% blockId="EZMAKER_ultrasonic_distance"
+    //% block="초음파 센서 거리 (cm)|Trig %trig|Echo %echo"
+    //% trig.fieldEditor="gridpicker" trig.fieldOptions.columns=3
+    //% echo.fieldEditor="gridpicker" echo.fieldOptions.columns=3
+    //% weight=50
+    //% subcategory="초음파 센서"
+    export function ultrasonicDistance(trig: EZDigitalPin, echo: EZDigitalPin): number {
+        let tPin = DigitalPin.P8;
+        let ePin = DigitalPin.P8;
+        
+        switch (<number>trig) {
+            case 108: tPin = DigitalPin.P8; break;
+            case 112: tPin = DigitalPin.P12; break;
+            case 113: tPin = DigitalPin.P13; break;
+            case 116: tPin = DigitalPin.P16; break;
+        }
+        
+        switch (<number>echo) {
+            case 108: ePin = DigitalPin.P8; break;
+            case 112: ePin = DigitalPin.P12; break;
+            case 113: ePin = DigitalPin.P13; break;
+            case 116: ePin = DigitalPin.P16; break;
+        }
+
+        // 핀 상태 초기화 (풀업/풀다운 끄기)
+        pins.setPull(tPin, PinPullMode.PullNone);
+        
+        // 트리거 신호 전송 (10us High)
+        pins.digitalWritePin(tPin, 0);
+        control.waitMicros(2);
+        pins.digitalWritePin(tPin, 1);
+        control.waitMicros(10);
+        pins.digitalWritePin(tPin, 0);
+
+        // 에코 핀에서 High 파형(초음파 왕복 시간) 측정 (최대 23000us 대기 -> 약 400cm 측정)
+        let d = pins.pulseIn(ePin, PulseValue.High, 23000);
+        
+        // 거리가 너무 가깝거나(0) 에러일 경우 0을 반환, 아닐 경우 cm로 변환 (time / 58)
+        let distance = Math.idiv(d, 58);
+        return distance > 0 ? distance : 0;
+    }
 }
