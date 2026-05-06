@@ -295,7 +295,7 @@ namespace EZMAKER {
             default: return -1;
         }
 
-        // 라인을 HIGH로 안정화 후 시작 신호 전송
+        // 라인 안정화 후 시작 신호
         pins.setPull(d, PinPullMode.PullUp);
         pins.digitalWritePin(d, 1);
         basic.pause(100);
@@ -304,23 +304,29 @@ namespace EZMAKER {
         pins.digitalWritePin(d, 1);
         control.waitMicros(30);
 
-        // DHT11 응답 펄스 소비 (LOW ~80us, HIGH ~80us) - 엄격한 체크 없이 무시
-        pins.pulseIn(d, PulseValue.Low, 500);
-        pins.pulseIn(d, PulseValue.High, 500);
+        // pulseIn 대신 digitalReadPin 폴링 사용 (pulseIn 내부 프리밍이 비트스트림 파괴 방지)
+        let t: number;
 
-        // 40비트 읽기: LOW ~50us 소비 후 HIGH 지속시간으로 비트 판별 (26us=0, 70us=1)
+        // DHT11 응답 소비: HIGH→LOW 전환 대기, LOW 소비, HIGH 소비
+        t = 0; while (pins.digitalReadPin(d) === 1) { if (++t > 1000) return -1; }
+        t = 0; while (pins.digitalReadPin(d) === 0) { if (++t > 1000) return -1; }
+        t = 0; while (pins.digitalReadPin(d) === 1) { if (++t > 1000) return -1; }
+
+        // 40비트 읽기: 각 비트 LOW 소비 → HIGH 시작 후 40us 샘플링
+        // HIGH 26us=0비트, HIGH 70us=1비트 → 40us 지점에서 아직 HIGH면 1
         let bytes: number[] = [0, 0, 0, 0, 0];
         for (let i = 0; i < 40; i++) {
-            pins.pulseIn(d, PulseValue.Low, 500);
-            if (pins.pulseIn(d, PulseValue.High, 500) > 40) {
+            t = 0; while (pins.digitalReadPin(d) === 0) { if (++t > 1000) return -1; }
+            control.waitMicros(40);
+            if (pins.digitalReadPin(d) === 1) {
                 bytes[i >> 3] |= (1 << (7 - (i & 7)));
+                t = 0; while (pins.digitalReadPin(d) === 1) { if (++t > 1000) return -1; }
             }
         }
 
-        // 체크섬 검증
-        if (((bytes[0] + bytes[1] + bytes[2] + bytes[3]) & 0xFF) !== bytes[4]) {
-            return -1;
-        }
+        // all-zero 오통과 방지 및 체크섬 검증
+        if (bytes[0] === 0 && bytes[1] === 0 && bytes[2] === 0 && bytes[3] === 0) return -1;
+        if (((bytes[0] + bytes[1] + bytes[2] + bytes[3]) & 0xFF) !== bytes[4]) return -1;
 
         return dataType === DHT11DataType.Humidity ? bytes[0] : bytes[2];
     }
