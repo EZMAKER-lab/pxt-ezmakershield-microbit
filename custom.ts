@@ -295,28 +295,29 @@ namespace EZMAKER {
             default: return -1;
         }
 
-        // Start signal: pull LOW 18ms, release HIGH 40us
+        // 라인을 HIGH로 안정화 후 시작 신호 전송
         pins.setPull(d, PinPullMode.PullUp);
+        pins.digitalWritePin(d, 1);
+        basic.pause(100);
         pins.digitalWritePin(d, 0);
         basic.pause(18);
         pins.digitalWritePin(d, 1);
-        control.waitMicros(40);
+        control.waitMicros(30);
 
-        // DHT11 response: LOW 80us then HIGH 80us
-        if (pins.pulseIn(d, PulseValue.Low, 500) === 0) return -1;
-        if (pins.pulseIn(d, PulseValue.High, 500) === 0) return -1;
+        // DHT11 응답 펄스 소비 (LOW ~80us, HIGH ~80us) - 엄격한 체크 없이 무시
+        pins.pulseIn(d, PulseValue.Low, 500);
+        pins.pulseIn(d, PulseValue.High, 500);
 
-        // Read 40 bits: each bit = LOW ~50us + HIGH (26us=0, 70us=1)
+        // 40비트 읽기: LOW ~50us 소비 후 HIGH 지속시간으로 비트 판별 (26us=0, 70us=1)
         let bytes: number[] = [0, 0, 0, 0, 0];
         for (let i = 0; i < 40; i++) {
-            pins.pulseIn(d, PulseValue.Low, 200);
-            let highDuration = pins.pulseIn(d, PulseValue.High, 200);
-            if (highDuration > 40) {
+            pins.pulseIn(d, PulseValue.Low, 500);
+            if (pins.pulseIn(d, PulseValue.High, 500) > 40) {
                 bytes[i >> 3] |= (1 << (7 - (i & 7)));
             }
         }
 
-        // Checksum: bytes[0]+[1]+[2]+[3] 하위 8비트 == bytes[4]
+        // 체크섬 검증
         if (((bytes[0] + bytes[1] + bytes[2] + bytes[3]) & 0xFF) !== bytes[4]) {
             return -1;
         }
