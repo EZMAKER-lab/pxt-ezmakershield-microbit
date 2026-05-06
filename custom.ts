@@ -265,18 +265,70 @@ namespace EZMAKER {
     }
 
     // =========================================================================
-    // 초음파 센서 메뉴
+    // DHT11 온습도 센서
     // =========================================================================
 
+    export enum DHT11DataType {
+        //% block="온도 (°C)"
+        Temperature = 0,
+        //% block="습도 (%)"
+        Humidity = 1
+    }
+
     /**
-     * 초음파 센서로 목표물까지의 거리를 측정합니다 (단위: cm).
+     * DHT11 온습도 센서에서 온도 또는 습도 값을 읽습니다.
      * @param port 연결 포트
+     * @param dataType 읽을 데이터 종류
      */
-    //% blockId="EZMAKER_ultrasonic_distance"
-    //% block="초음파 센서 (CS100A) 거리 (cm) | 연결포트 %port"
+    //% blockId="EZMAKER_dht11_read"
+    //% block="DHT11 온습도 센서 %dataType | 연결포트 %port"
     //% port.fieldEditor="gridpicker" port.fieldOptions.columns=3
-    //% weight=50
-    //% subcategory="초음파 센서"
+    //% weight=60
+    //% subcategory="온습도 센서"
+    export function readDHT11(port: EZDigitalPin, dataType: DHT11DataType): number {
+        let d: DigitalPin;
+        switch (<number>port) {
+            case 108: d = DigitalPin.P8; break;
+            case 112: d = DigitalPin.P12; break;
+            case 113: d = DigitalPin.P13; break;
+            case 116: d = DigitalPin.P16; break;
+            default: return -1;
+        }
+
+        // Start signal: pull LOW 18ms, release HIGH 40us
+        pins.setPull(d, PinPullMode.PullUp);
+        pins.digitalWritePin(d, 0);
+        basic.pause(18);
+        pins.digitalWritePin(d, 1);
+        control.waitMicros(40);
+
+        // DHT11 response: LOW 80us then HIGH 80us
+        if (pins.pulseIn(d, PulseValue.Low, 500) === 0) return -1;
+        if (pins.pulseIn(d, PulseValue.High, 500) === 0) return -1;
+
+        // Read 40 bits: each bit = LOW ~50us + HIGH (26us=0, 70us=1)
+        let bytes: number[] = [0, 0, 0, 0, 0];
+        for (let i = 0; i < 40; i++) {
+            pins.pulseIn(d, PulseValue.Low, 200);
+            let highDuration = pins.pulseIn(d, PulseValue.High, 200);
+            if (highDuration > 40) {
+                bytes[i >> 3] |= (1 << (7 - (i & 7)));
+            }
+        }
+
+        // Checksum: bytes[0]+[1]+[2]+[3] 하위 8비트 == bytes[4]
+        if (((bytes[0] + bytes[1] + bytes[2] + bytes[3]) & 0xFF) !== bytes[4]) {
+            return -1;
+        }
+
+        return dataType === DHT11DataType.Humidity ? bytes[0] : bytes[2];
+    }
+
+    // =========================================================================
+    // 초음파 센서 (보류 중 - 블록 미노출)
+    // =========================================================================
+
+    // CS100A 1핀 모드 구현 보류. 측정값 불안정으로 추후 재시도 예정.
     export function ultrasonicDistance(port: EZDigitalPin): number {
         let d = 0;
         
