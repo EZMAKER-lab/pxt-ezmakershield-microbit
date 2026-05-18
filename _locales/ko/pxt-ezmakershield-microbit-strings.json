@@ -22,5 +22,6 @@
     "EZMAKER.showNeoPixelBarGraph|block": "%npType 네오픽셀(%pin) 막대그래프 표시 (현재: %value 최대: %high)",
     "EZMAKER.DHT11DataType.Temperature|block": "온도 (°C)",
     "EZMAKER.DHT11DataType.Humidity|block": "습도 (%)",
-    "EZMAKER.readDHT11|block": "DHT11 온습도 센서 %dataType | 연결포트 %port"
+    "EZMAKER.readDHT11|block": "DHT11 온습도 센서 %dataType | 연결포트 %port",
+    "EZMAKER.ultrasonicDistance|block": "초음파 센서 (CS100A) 거리 (cm) | 연결포트 %port"
 }

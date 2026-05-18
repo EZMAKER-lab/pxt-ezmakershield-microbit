@@ -275,6 +275,12 @@ namespace EZMAKER {
         Humidity = 1
     }
 
+    let lastDHT11Time = -2000;
+    let lastTemperature = -1;
+    let lastHumidity = -1;
+    let lastDHT11Port = -1;
+    let lastErrorCode = -1;
+
     /**
      * DHT11 온습도 센서에서 온도 또는 습도 값을 읽습니다.
      * @param port 연결 포트
@@ -284,7 +290,7 @@ namespace EZMAKER {
     //% block="DHT11 온습도 센서 %dataType | 연결포트 %port"
     //% port.fieldEditor="gridpicker" port.fieldOptions.columns=3
     //% weight=60
-    //% subcategory="온습도 센서"
+    //% subcategory="온습도 센서(DHT11)"
     export function readDHT11(port: EZDigitalPin, dataType: DHT11DataType): number {
         let d: DigitalPin;
         switch (<number>port) {
@@ -295,50 +301,99 @@ namespace EZMAKER {
             default: return -1;
         }
 
-        // 라인 안정화 후 시작 신호
-        pins.setPull(d, PinPullMode.PullUp);
-        pins.digitalWritePin(d, 1);
-        basic.pause(100);
-        pins.digitalWritePin(d, 0);
-        basic.pause(18);
-        pins.digitalWritePin(d, 1);
-        control.waitMicros(30);
-
-        // pulseIn 대신 digitalReadPin 폴링 사용 (pulseIn 내부 프리밍이 비트스트림 파괴 방지)
-        let t: number;
-
-        // DHT11 응답 소비: HIGH→LOW 전환 대기, LOW 소비, HIGH 소비
-        t = 0; while (pins.digitalReadPin(d) === 1) { if (++t > 1000) return -1; }
-        t = 0; while (pins.digitalReadPin(d) === 0) { if (++t > 1000) return -1; }
-        t = 0; while (pins.digitalReadPin(d) === 1) { if (++t > 1000) return -1; }
-
-        // 40비트 읽기: 각 비트 LOW 소비 → HIGH 시작 후 40us 샘플링
-        // HIGH 26us=0비트, HIGH 70us=1비트 → 40us 지점에서 아직 HIGH면 1
-        let bytes: number[] = [0, 0, 0, 0, 0];
-        for (let i = 0; i < 40; i++) {
-            t = 0; while (pins.digitalReadPin(d) === 0) { if (++t > 1000) return -1; }
-            control.waitMicros(40);
-            if (pins.digitalReadPin(d) === 1) {
-                bytes[i >> 3] |= (1 << (7 - (i & 7)));
-                t = 0; while (pins.digitalReadPin(d) === 1) { if (++t > 1000) return -1; }
+        // 1. 센서 혹사 방지 (1초 이내 재요청 시 캐시 또는 직전 에러 반환)
+        let currentTime = input.runningTime();
+        if (currentTime - lastDHT11Time < 1000 && lastDHT11Port === <number>port) {
+            if (lastTemperature !== -1 && lastHumidity !== -1) {
+                return dataType === DHT11DataType.Temperature ? lastTemperature : lastHumidity;
+            } else {
+                return lastErrorCode; // 1초 내 재요청 시 직전 에러 코드 반환
             }
         }
 
-        // all-zero 오통과 방지 및 체크섬 검증
-        if (bytes[0] === 0 && bytes[1] === 0 && bytes[2] === 0 && bytes[3] === 0) return -1;
-        if (((bytes[0] + bytes[1] + bytes[2] + bytes[3]) & 0xFF) !== bytes[4]) return -1;
+        // 측정 시도 시간 기록
+        lastDHT11Time = currentTime;
+        lastDHT11Port = <number>port;
 
-        return dataType === DHT11DataType.Humidity ? bytes[0] : bytes[2];
+        // 타임 크리티컬 구간 전에 배열을 할당해둡니다. (이중 루프 오버헤드 제거용)
+        let dataArray: boolean[] = [];
+        for (let i = 0; i < 40; i++) dataArray.push(false);
+
+        // 2. 핀 제어 권한 양보 및 초기 통신 시작 (Alan Wang 로직 완벽 적용)
+        pins.digitalWritePin(d, 0); // 센서 활성화 신호 (LOW)
+        basic.pause(18);
+        
+        // 핀을 다시 당겨주고 입력 모드로 전환
+        if (true) pins.setPull(d, PinPullMode.PullUp);
+        pins.digitalReadPin(d);
+        
+        // 센서가 LOW 응답을 보낼 때까지 약 20~40us가 소요됨
+        control.waitMicros(40);
+        if (pins.digitalReadPin(d) === 1) {
+            lastErrorCode = -4; return -4; 
+        }
+
+        // 3. 센서 응답 대기
+        // 아주 미세한 지연조차 허용하지 않기 위해 타임아웃 방어 코드를 아예 제거합니다.
+        while (pins.digitalReadPin(d) === 0);
+        while (pins.digitalReadPin(d) === 1);
+
+        // 4. 데이터 수집 (40 bits)
+        // 이중 for 루프(5x8)가 유발하는 컨텍스트 스위칭 지연을 막기 위해 단일 루프로 40번 연속 측정합니다.
+        for (let i = 0; i < 40; i++) {
+            while (pins.digitalReadPin(d) === 1); 
+            while (pins.digitalReadPin(d) === 0); 
+            
+            control.waitMicros(28); // 28us 대기 후 바로 샘플링
+            
+            if (pins.digitalReadPin(d) === 1) {
+                dataArray[i] = true;
+            }
+        }
+
+        // 5. 비트 파싱 및 체크섬
+        let bytes = [0, 0, 0, 0, 0];
+        for (let i = 0; i < 5; i++) {
+            for (let j = 0; j < 8; j++) {
+                if (dataArray[8 * i + j]) {
+                    bytes[i] += 1 << (7 - j);
+                }
+            }
+        }
+
+        if (bytes[0] === 0 && bytes[1] === 0 && bytes[2] === 0 && bytes[3] === 0) { lastErrorCode = -7; return -7; }
+        
+        // Alan Wang의 체크섬 검증 방식과 완전히 동일하게 처리합니다.
+        let checksumTmp = bytes[0] + bytes[1] + bytes[2] + bytes[3];
+        if (checksumTmp >= 512) checksumTmp -= 512;
+        if (checksumTmp >= 256) checksumTmp -= 256;
+        if (bytes[4] !== checksumTmp) { lastErrorCode = -8; return -8; }
+
+        // 정상 값 캐싱 (소수점 포함)
+        // 일부 신형 DHT11은 bytes[1]과 bytes[3]에 소수점 1자리 데이터를 보냅니다.
+        lastHumidity = bytes[0] + (bytes[1] / 10.0);
+        lastTemperature = bytes[2] + (bytes[3] / 10.0);
+        lastErrorCode = 0;
+        
+        return dataType === DHT11DataType.Temperature ? lastTemperature : lastHumidity;
     }
 
     // =========================================================================
-    // 초음파 센서 (보류 중 - 블록 미노출)
+    // 초음파 센서 (CS100A 1핀 모드)
     // =========================================================================
 
-    // CS100A 1핀 모드 구현 보류. 측정값 불안정으로 추후 재시도 예정.
+    /**
+     * 초음파 센서에서 물체까지의 거리를 측정합니다.
+     * @param port 연결 포트
+     */
+    //% blockId="EZMAKER_ultrasonic_distance"
+    //% block="초음파 센서 (CS100A) 거리 (cm) | 연결포트 %port"
+    //% port.fieldEditor="gridpicker" port.fieldOptions.columns=3
+    //% weight=50
+    //% subcategory="초음파 센서"
     export function ultrasonicDistance(port: EZDigitalPin): number {
         let d = 0;
-        
+
         switch (<number>port) {
             case 108:
                 pins.setPull(DigitalPin.P8, PinPullMode.PullNone);
@@ -373,5 +428,58 @@ namespace EZMAKER {
         // 거리가 너무 가깝거나(0) 에러일 경우 0을 반환, 아닐 경우 cm로 변환 (time / 58)
         let distance = Math.round(d / 58);
         return distance > 0 ? distance : 0;
+    }
+
+    // =========================================================================
+    // 수중/접촉온도센서 (DS18B20)
+    // =========================================================================
+
+    let lastDS18B20Time = -2000;
+    let lastDS18B20Temp = -273;
+    let lastDS18B20Port = -1;
+
+    /**
+     * DS18B20 수중/접촉온도센서의 온도(°C) 값을 읽습니다.
+     * @param port 연결 포트
+     */
+    //% blockId="EZMAKER_ds18b20_read"
+    //% block="수중/접촉온도센서(DS18B20) 온도(°C) | 연결포트 %port"
+    //% port.fieldEditor="gridpicker" port.fieldOptions.columns=3
+    //% weight=40
+    //% subcategory="수중/접촉온도센서(DS18B20)"
+    export function readDS18B20(port: EZDigitalPin): number {
+        let d: DigitalPin;
+        switch (<number>port) {
+            case 108: d = DigitalPin.P8; break;
+            case 112: d = DigitalPin.P12; break;
+            case 113: d = DigitalPin.P13; break;
+            case 116: d = DigitalPin.P16; break;
+            default: return -273; // 에러 시 절대영도 반환
+        }
+
+        // 1. 센서 혹사 방지 (1초 이내 재요청 시 이전 측정값 반환)
+        let currentTime = input.runningTime();
+        if (currentTime - lastDS18B20Time < 1000 && lastDS18B20Port === <number>port) {
+            if (lastDS18B20Temp !== -273) {
+                return lastDS18B20Temp;
+            }
+        }
+
+        lastDS18B20Time = currentTime;
+        lastDS18B20Port = <number>port;
+
+        // 기존 설치된 dstemp 확장 기능의 함수를 호출하여 온도 값 반환
+        let temp = dstemp.celsius(d);
+        
+        // DS18B20 통신 에러 발생 시 (일반적으로 -Infinity 또는 매우 작은 값 반환)
+        // 이전 값이 출력되지 않도록 에러 코드(-999)를 즉시 반환하고 캐시도 에러 상태로 갱신
+        if (temp < -100) {
+            lastDS18B20Temp = -999;
+            return lastDS18B20Temp;
+        }
+
+        // 소수점 2자리까지만 반올림 처리 후 캐싱
+        lastDS18B20Temp = Math.round(temp * 100) / 100;
+        return lastDS18B20Temp;
     }
 }
