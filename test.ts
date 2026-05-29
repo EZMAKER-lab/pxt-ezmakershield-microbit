@@ -1,5 +1,1 @@
-basic.forever(function () {
-    let 거리 = EZMAKER.ultrasonicDistance(EZMAKER.EZDigitalPin.P8)
-    serial.writeValue("Distance", 거리)
-    basic.pause(100)
-})
+// 이곳에 확장 블록 테스트 코드를 작성하세요.

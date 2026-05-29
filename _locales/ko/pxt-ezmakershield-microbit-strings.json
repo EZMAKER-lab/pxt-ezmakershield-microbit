@@ -23,5 +23,14 @@
     "EZMAKER.DHT11DataType.Temperature|block": "온도 (°C)",
     "EZMAKER.DHT11DataType.Humidity|block": "습도 (%)",
     "EZMAKER.readDHT11|block": "DHT11 온습도 센서 %dataType | 연결포트 %port",
-    "EZMAKER.ultrasonicDistance|block": "초음파 센서 (CS100A) 거리 (cm) | 연결포트 %port"
+    "EZMAKER.ultrasonicDistance|block": "초음파 센서 거리 (cm) | 연결포트 %port",
+    "EZMAKER.readDIYBAnalog|block": "DIY-B 센서 아날로그 값(0~1023) 연결포트 %pin",
+    "EZMAKER.readDIYBDigital|block": "DIY-B 센서 디지털 입력값 연결포트 %pin",
+    "EZMAKER.readLightRaw|block": "밝기 센서 아날로그 값(0~1023) 연결포트 %pin",
+    "EZMAKER.readLightPercentage|block": "밝기 센서 변환 값(0~100) 연결포트 %pin",
+    "EZMAKER.readSoundRaw|block": "소리 센서 아날로그 값(0~1023) 연결포트 %pin",
+    "EZMAKER.readSoundPercentage|block": "소리 센서 변환 값(0~100) 연결포트 %pin",
+    "EZMAKER.readVoltage|block": "전압 센서 측정 값(0~16.5V) 연결포트 %pin",
+    "EZMAKER.readMQ2|block": "가스 센서(MQ2) %gasType 값(ppm) 연결포트 %pin",
+    "EZMAKER.readMax31850|block": "고온 센서 온도(°C) 연결포트 %port"
 }
