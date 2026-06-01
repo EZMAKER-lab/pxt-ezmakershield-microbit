@@ -91,26 +91,36 @@ namespace max31850 {
     }
 
     bool readBit(_GPIO ioPin) {
-        // Recovery
+        // Ensure recovery time
         setToOutput(ioPin);
-        setPinValue(ioPin, 1);
-        _wait_us(TIME_RECOV); // 15us
-
-        // Pull low for 2us
+        setPinValue(ioPin,1);
+        _wait_us(TIME_RECOV);
+ 
+        // Start the transaction 
         setPinValue(ioPin, 0);
-        _wait_us(2);
-
-        // Release and setToInput
+        _wait_us(1); // Updated to 1 for minimum wait
+        setPinValue(ioPin, 1);
         setToInput(ioPin);
 
-        // Wait to reach the 12us sampling point from the start of slot
-        _wait_us(10);
+        // Start high (default) 
+        bool b = true; 
 
-        // Sample
-        bool b = getPinValue(ioPin);
+        // Sample for ~70uS after releasing 
+#if MICROBIT_CODAL
+        // v2: 156 uS for 2000 iterations ; 0.077uS/ iteration
+        uint32_t maxCounts = (int)(TIME_SLOT/0.0635);
+#else
+        // v1: 115 uS for 200 iterations; 0.575uS/iteration
+        _wait_us(0);  // Wait for ~6uS
+        uint32_t maxCounts = (int)(TIME_SLOT/0.57);
+#endif
+        do {
+            // If the bus goes low, its a 0
+            b = b && getPinValue(ioPin);
+        } while(maxCounts-->0);
 
-        // Wait for remainder of time slot
-        _wait_us(78); // 90us - 12us
+        // Switch back to output
+        setPinValue(ioPin,1);
 
         return b; 
     }
@@ -162,32 +172,42 @@ namespace max31850 {
     }
 
     bool resetAndCheckPresence(_GPIO ioPin) {
+        // Set pin to High (and get I/O object)
         setToOutput(ioPin);
         setPinValue(ioPin, 1);
-        _wait_us(TIME_POWER_UP); // 1000us
-        
-        // Pull low for 480us (TIME_RESET_LOW)
+        _wait_us(TIME_POWER_UP); // Possible power-up time
+
+        // Set ioPin to output / apply reset signal
         setPinValue(ioPin, 0);
-        _wait_us(TIME_RESET_LOW); // 500us
-        
-        // Release and set to input
+        _wait_us(TIME_RESET_LOW);     // Wait for duration of reset pulse
+
+        // Return pin to input for presence detection 
         setPinValue(ioPin, 1);
         setToInput(ioPin);
-        
-        // Wait for presence pulse (15-60us after release, slave pulls low for 60-240us)
-        // Sample around 65us after release
-        _wait_us(65);
-        
-        // Sample presence
-        bool presence = (getPinValue(ioPin) == 0);
-        
-        // Wait for presence pulse to finish
-        _wait_us(420);
-        
-        // Check if the line released back to High
-        bool release = (getPinValue(ioPin) == 1);
-        
-        return presence && release;
+        _wait_us(TIME_POST_RESET_TO_DETECT);
+
+#if MICROBIT_CODAL
+        // v2: 462.5 for 2000 iterations ; 0.231uS/iter
+        // Padded down (the "release" needs to be complete)
+        int maxCounts = (int)(TIME_PRESENCE_DETECT/0.1);   // Hand tuned values...Full presence period sample
+#else 
+        // v1: 1.705 uS/Iteration
+        int maxCounts = (int)(TIME_PRESENCE_DETECT/1);
+#endif
+
+        // Check for presence pulse (pulling line low)
+        bool presence = false;        
+        do {
+            presence = presence || (getPinValue(ioPin) == 0);
+        } while (maxCounts-- > 0);
+
+        // Confirm that it's released
+        bool release = getPinValue(ioPin)==1;
+
+        // Success if the pin was pulled low and went high again
+        bool success = presence && release;
+
+        return success; // Return success or failure
     }
 
     bool configure(_GPIO ioPin) {
