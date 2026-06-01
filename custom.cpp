@@ -91,24 +91,27 @@ namespace max31850 {
     }
 
     bool readBit(_GPIO ioPin) {
+        // Recovery
         setToOutput(ioPin);
-        setPinValue(ioPin,1);
-        _wait_us(TIME_RECOV);
-        setPinValue(ioPin, 0);
-        _wait_us(1);
         setPinValue(ioPin, 1);
+        _wait_us(TIME_RECOV); // 15us
+
+        // Pull low for 2us
+        setPinValue(ioPin, 0);
+        _wait_us(2);
+
+        // Release and setToInput
         setToInput(ioPin);
-        bool b = true; 
-#if MICROBIT_CODAL
-        uint32_t maxCounts = (int)(TIME_SLOT/0.0635);
-#else
-        _wait_us(0);
-        uint32_t maxCounts = (int)(TIME_SLOT/0.57);
-#endif
-        do {
-            b = b && getPinValue(ioPin);
-        } while(maxCounts-->0);
-        setPinValue(ioPin,1);
+
+        // Wait to reach the 12us sampling point from the start of slot
+        _wait_us(10);
+
+        // Sample
+        bool b = getPinValue(ioPin);
+
+        // Wait for remainder of time slot
+        _wait_us(78); // 90us - 12us
+
         return b; 
     }
 
@@ -128,6 +131,18 @@ namespace max31850 {
             }
             data[j] = b;
         }     
+
+        // Check for disconnected/shortcut line: all bytes 0x00 or 0xFF
+        bool allZero = true;
+        bool allOne = true;
+        for (int i = 0; i < 9; i++) {
+            if (data[i] != 0x00) allZero = false;
+            if (data[i] != 0xFF) allOne = false;
+        }
+        if (allZero || allOne) {
+            return false;
+        }
+
         value = data[1];
         value <<= 8;
         value |= data[0];
@@ -149,24 +164,29 @@ namespace max31850 {
     bool resetAndCheckPresence(_GPIO ioPin) {
         setToOutput(ioPin);
         setPinValue(ioPin, 1);
-        _wait_us(TIME_POWER_UP);
+        _wait_us(TIME_POWER_UP); // 1000us
+        
+        // Pull low for 480us (TIME_RESET_LOW)
         setPinValue(ioPin, 0);
-        _wait_us(TIME_RESET_LOW);
+        _wait_us(TIME_RESET_LOW); // 500us
+        
+        // Release and set to input
         setPinValue(ioPin, 1);
         setToInput(ioPin);
-        _wait_us(TIME_POST_RESET_TO_DETECT);
-
-#if MICROBIT_CODAL
-        int maxCounts = (int)(TIME_PRESENCE_DETECT/0.1);
-#else 
-        int maxCounts = (int)(TIME_PRESENCE_DETECT/1);
-#endif
-        bool presence = false;        
-        do {
-            presence = presence || (getPinValue(ioPin) == 0);
-        } while (maxCounts-- > 0);
-
-        bool release = getPinValue(ioPin)==1;
+        
+        // Wait for presence pulse (15-60us after release, slave pulls low for 60-240us)
+        // Sample around 65us after release
+        _wait_us(65);
+        
+        // Sample presence
+        bool presence = (getPinValue(ioPin) == 0);
+        
+        // Wait for presence pulse to finish
+        _wait_us(420);
+        
+        // Check if the line released back to High
+        bool release = (getPinValue(ioPin) == 1);
+        
         return presence && release;
     }
 
