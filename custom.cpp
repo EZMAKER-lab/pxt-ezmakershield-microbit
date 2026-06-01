@@ -21,7 +21,7 @@ namespace dstemp {
 namespace max31850 {
 
     // MAX31850용 Scratchpad 읽기 및 온도 변환 (dstemp의 검증된 readBit 호출)
-    bool readScratchpad(dstemp::_GPIO ioPin, double& temp) {
+    bool readScratchpad(dstemp::_GPIO ioPin, float& temp) {
         uint8_t data[9];
         int16_t value;
         uint8_t crc = 0;
@@ -61,16 +61,16 @@ namespace max31850 {
 
         // MAX31850 14비트 전용 부동소수점 변환 (0.25°C 해상도)
         int16_t temp_raw = value >> 2;
-        temp = (double)temp_raw * 0.25;
-        temp = round(temp * 10.0) / 10.0; // 소수점 1자리 반올림
+        temp = (float)temp_raw * 0.25f;
+        temp = round(temp * 10.0f) / 10.0f; // 소수점 1자리 반올림
 
         return crc == 0;
     }
 
     //%
-    double readMax31850(int pin) {
+    float readMax31850(int pin) {
         MicroBitPin *mbp = getPin(pin);
-        if (!mbp) return -999.0;
+        if (!mbp) return -999.0f;
 
 #if MICROBIT_CODAL
         dstemp::_GPIO gpio = mbp->name;
@@ -93,7 +93,7 @@ namespace max31850 {
         }
 
         if(success == false) {
-            return -999.0;
+            return -999.0f;
         }
 
         // 2. 변환 완료 대기 (MAX31850 변환에 충분한 100ms 대기)
@@ -104,7 +104,7 @@ namespace max31850 {
             if(dstemp::resetAndCheckPresence(gpio)) {
                 dstemp::writeByte(gpio, 0xCC); // Skip ROM
                 dstemp::writeByte(gpio, 0xBE); // Read Scratchpad
-                double temp;
+                float temp;
                 success = readScratchpad(gpio, temp);
                 if(success) {
                     return temp;
@@ -112,6 +112,6 @@ namespace max31850 {
             }
         } 
 
-        return -999.0;
+        return -999.0f;
     }
 }
