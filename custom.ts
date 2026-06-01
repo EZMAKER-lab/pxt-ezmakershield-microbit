@@ -239,7 +239,9 @@ namespace EZMAKER {
             case 116: p = DigitalPin.P16; break;
             default: return -999;
         }
-        return readMax31850Shim(p);
+        let temp = readMax31850Shim(p);
+        if (temp === -999) return -999;
+        return Math.round(temp * 10) / 10;
     }
 
     // =========================================================================
