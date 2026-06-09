@@ -2,7 +2,7 @@
 
 **EZmaker Shield Expansion logic and blocks for BBC micro:bit**
 
-This MakeCode extension provides structured, easy-to-use blocks for over 25 different EZmaker sensors and actuators when connected to the EZmaker Shield for micro:bit.
+This MakeCode extension provides structured, easy-to-use blocks for over 25 different EZmaker sensors and actuators when connected to the [EZmaker Shield](https://ezmaker.co.kr/) for micro:bit.
 
 > [!NOTE]
 > [한국어 설명서는 여기에서 확인하실 수 있습니다. (Korean documentation is available here)](README_ko.md)
