@@ -1,6 +1,6 @@
 {
     "name": "pxt-ezmakershield-microbit",
-    "version": "0.0.32",
+    "version": "0.0.33",
     "description": "MakeCode extension for EZmaker (이지메이커) Micro:bit Shield blocks",
     "license": "MIT",
     "dependencies": {
@@ -13,6 +13,7 @@
         "custom.ts",
         "custom.cpp",
         "test.ts",
+        "icon.png",
         "_locales/ko/pxt-ezmakershield-microbit-strings.json"
     ],
     "testFiles": [
@@ -21,5 +22,9 @@
     "supportedTargets": [
         "microbit"
     ],
-    "preferredEditor": "blocksprj"
+    "preferredEditor": "blocksprj",
+    "card": {
+        "name": "EZmaker Shield",
+        "imageUrl": "file:icon.png"
+    }
 }
