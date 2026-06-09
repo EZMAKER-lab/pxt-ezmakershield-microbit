@@ -1,6 +1,6 @@
 {
     "name": "pxt-ezmakershield-microbit",
-    "version": "0.0.34",
+    "version": "0.0.35",
     "description": "MakeCode extension for EZmaker (이지메이커) Micro:bit Shield blocks",
     "license": "MIT",
     "dependencies": {
