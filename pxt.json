@@ -1,19 +1,17 @@
 {
     "name": "pxt-ezmakershield-microbit",
-    "version": "0.0.35",
+    "version": "0.0.36",
     "description": "MakeCode extension for EZmaker (이지메이커) Micro:bit Shield blocks",
     "license": "MIT",
     "dependencies": {
         "core": "*",
         "neopixel": "github:microsoft/pxt-neopixel#v0.7.3",
-        "dstemp": "github:bsiever/microbit-dstemp#master"
+        "dstemp": "github:bsiever/microbit-dstemp#v0.2.1"
     },
     "files": [
         "README.md",
         "custom.ts",
         "custom.cpp",
-        "test.ts",
-        "icon.png",
         "_locales/ko/pxt-ezmakershield-microbit-strings.json"
     ],
     "testFiles": [

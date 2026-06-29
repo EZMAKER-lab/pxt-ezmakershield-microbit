@@ -4,7 +4,7 @@
 
 using namespace pxt;
 
-// dstemp.cpp에 존재하는 검증된 1-Wire 비트뱅잉 함수들 전방 선언
+// Forward declaration of 1-Wire bit-banging functions implemented in dstemp.cpp
 namespace dstemp {
 #if MICROBIT_CODAL
     typedef int _GPIO;
@@ -18,9 +18,9 @@ namespace dstemp {
     bool resetAndCheckPresence(_GPIO ioPin);
 }
 
-namespace max31850 {
+namespace EZMAKER {
 
-    // MAX31850용 Scratchpad 읽기 및 온도 변환 (dstemp의 검증된 readBit 호출)
+    // Read Scratchpad and perform temperature conversion for MAX31850 (utilizes dstemp readBit)
     bool readScratchpad(dstemp::_GPIO ioPin, float& temp) {
         uint8_t data[9];
         int16_t value;
@@ -39,7 +39,7 @@ namespace max31850 {
             data[j] = b;
         }     
 
-        // 단선 예외 처리 (0x00 또는 0xFF 도배 검사)
+        // Handle open-circuit exceptions (all 0x00 or all 0xFF check)
         bool allZero = true;
         bool allOne = true;
         for (int i = 0; i < 9; i++) {
@@ -54,15 +54,15 @@ namespace max31850 {
         value <<= 8;
         value |= data[0];
         
-        // Fault detection (LSB Bit 0 is 1 if fault)
+        // Fault detection (LSB Bit 0 is 1 if fault occurs)
         if (data[0] & 0x01) {
             return false;
         }
 
-        // MAX31850 14비트 전용 부동소수점 변환 (0.25°C 해상도)
+        // Convert 14-bit temperature reading from MAX31850 (0.25°C resolution)
         int16_t temp_raw = value >> 2;
         temp = (float)temp_raw * 0.25f;
-        temp = round(temp * 10.0f) / 10.0f; // 소수점 1자리 반올림
+        temp = round(temp * 10.0f) / 10.0f; // Round to 1 decimal place
 
         return crc == 0;
     }
@@ -82,7 +82,7 @@ namespace max31850 {
 
         bool success = false;
         
-        // 1. 통신 초기화 및 측정 개시 (Convert T)
+        // 1. Initialize communication and start conversion (Convert T)
         for(int tries = 0; tries < 3; tries++) {
             if(dstemp::resetAndCheckPresence(gpio)) {
                 dstemp::writeByte(gpio, 0xCC); // Skip ROM
@@ -96,10 +96,10 @@ namespace max31850 {
             return -999.0f;
         }
 
-        // 2. 변환 완료 대기 (MAX31850 변환에 충분한 100ms 대기)
+        // 2. Wait for conversion to complete (100ms delay is sufficient for MAX31850)
         uBit.sleep(100);
 
-        // 3. 데이터 읽기 시도 (Read Scratchpad)
+        // 3. Read data from scratchpad (Read Scratchpad)
         for(int tries = 0; tries < 3; tries++) {
             if(dstemp::resetAndCheckPresence(gpio)) {
                 dstemp::writeByte(gpio, 0xCC); // Skip ROM

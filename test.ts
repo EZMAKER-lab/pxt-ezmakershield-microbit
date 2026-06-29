@@ -1,42 +1,42 @@
 // EZmaker Shield Extension Tests
-// 이 테스트 코드는 확장 프로그램의 모든 블록이 마이크로비트 컴파일러에서 오류 없이 컴파일되는지 검증합니다.
+// This test code validates that all blocks in the extension compile without errors.
 
-// 1. DIY-A 센서 테스트
+// 1. DIY-A Sensor Test
 let rawA = EZMAKER.readDIYARaw(EZMAKER.EZAnalogPin.P0);
 let voltA = EZMAKER.readDIYAVoltage(EZMAKER.EZAnalogPin.P0);
 
-// 2. DIY-B 센서 테스트
+// 2. DIY-B Sensor Test
 let analogB = EZMAKER.readDIYBAnalog(EZMAKER.EZAnalogPin.P1);
 let digitalB = EZMAKER.readDIYBDigital(EZMAKER.EZDigitalPin.P8);
 
-// 3. 가스 센서 (MQ2) 테스트
+// 3. Gas Sensor (MQ2) Test
 let lpgGas = EZMAKER.readMQ2(EZMAKER.MQ2GasType.LPG, EZMAKER.EZAnalogPin.P0);
 
-// 4. 고온 센서 (MAX31850) 테스트
+// 4. High Temperature Sensor (MAX31850) Test
 let tempMax = EZMAKER.readMax31850(EZMAKER.EZDigitalPin.P12);
 
-// 5. 밝기 센서 (CDS) 테스트
+// 5. Light Sensor (CDS) Test
 let lightRaw = EZMAKER.readLightRaw(EZMAKER.EZAnalogPin.P1);
 let lightPct = EZMAKER.readLightPercentage(EZMAKER.EZAnalogPin.P1);
 
-// 6. 소리 센서 테스트
+// 6. Sound Sensor Test
 let soundRaw = EZMAKER.readSoundRaw(EZMAKER.EZAnalogPin.P2);
 let soundPct = EZMAKER.readSoundPercentage(EZMAKER.EZAnalogPin.P2);
 
-// 7. 수중/접촉온도센서 (DS18B20) 테스트
+// 7. Waterproof/Contact Temperature Sensor (DS18B20) Test
 let tempDs = EZMAKER.readDS18B20(EZMAKER.EZDigitalPin.P13);
 
-// 8. 온습도 센서 (DHT11) 테스트
+// 8. Temp & Humidity Sensor (DHT11) Test
 let tempDht = EZMAKER.readDHT11(EZMAKER.EZDigitalPin.P16, EZMAKER.DHT11DataType.Temperature);
 let humiDht = EZMAKER.readDHT11(EZMAKER.EZDigitalPin.P16, EZMAKER.DHT11DataType.Humidity);
 
-// 9. 전압 센서 테스트
+// 9. Voltage Sensor Test
 let voltSensor = EZMAKER.readVoltage(EZMAKER.EZAnalogPin.P2);
 
-// 10. 초음파 센서 테스트
+// 10. Ultrasonic Sensor Test
 let distCm = EZMAKER.ultrasonicDistance(EZMAKER.EZDigitalPin.P8);
 
-// 11. 네오픽셀 LED 제어 테스트
+// 11. NeoPixel LED Control Test
 EZMAKER.setNeoPixelColorAll(EZMAKER.NeoPixelType.Single, EZMAKER.EZDigitalPin.P8, 0xFF0000);
 EZMAKER.setNeoPixelPixelColor(EZMAKER.NeoPixelType.Single, EZMAKER.EZDigitalPin.P8, 0, 0x00FF00);
 EZMAKER.setNeoPixelBrightness(EZMAKER.NeoPixelType.Single, EZMAKER.EZDigitalPin.P8, 128);
