@@ -18,7 +18,7 @@ namespace dstemp {
     bool resetAndCheckPresence(_GPIO ioPin);
 }
 
-namespace EZMAKER {
+namespace ezmaker {
 
     // Read Scratchpad and perform temperature conversion for MAX31850 (utilizes dstemp readBit)
     bool readScratchpad(dstemp::_GPIO ioPin, float& temp) {

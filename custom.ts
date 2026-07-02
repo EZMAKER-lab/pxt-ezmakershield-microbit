@@ -1,34 +1,64 @@
 /**
  * Custom blocks for EZMAKER Shield
  */
-//% weight=100 color="#FF5733" icon="\uf12e" block="EZMAKER"
-namespace EZMAKER {
 
-    /**
-     * Analog input pins (P0, P1, P2)
-     */
-    export enum EZAnalogPin {
-        //% block="P0"
-        P0 = AnalogPin.P0,
-        //% block="P1"
-        P1 = AnalogPin.P1,
-        //% block="P2"
-        P2 = AnalogPin.P2
-    }
+/**
+ * Analog input pins (P0, P1, P2)
+ */
+enum EZAnalogPin {
+    //% block="P0"
+    P0 = AnalogPin.P0,
+    //% block="P1"
+    P1 = AnalogPin.P1,
+    //% block="P2"
+    P2 = AnalogPin.P2
+}
 
-    /**
-     * Digital pins (P8, P12, P13, P16)
-     */
-    export enum EZDigitalPin {
-        //% block="P8"
-        P8 = 108,  // DigitalPin.P8
-        //% block="P12"
-        P12 = 112, // DigitalPin.P12
-        //% block="P13"
-        P13 = 113, // DigitalPin.P13
-        //% block="P16"
-        P16 = 116  // DigitalPin.P16
-    }
+/**
+ * Digital pins (P8, P12, P13, P16)
+ */
+enum EZDigitalPin {
+    //% block="P8"
+    P8 = 108,  // DigitalPin.P8
+    //% block="P12"
+    P12 = 112, // DigitalPin.P12
+    //% block="P13"
+    P13 = 113, // DigitalPin.P13
+    //% block="P16"
+    P16 = 116  // DigitalPin.P16
+}
+
+enum MQ2GasType {
+    //% block="LPG"
+    LPG = 0,
+    //% block="CO"
+    CO = 1,
+    //% block="smoke"
+    Smoke = 2,
+    //% block="H2"
+    H2 = 3,
+    //% block="propane"
+    Propane = 4
+}
+
+enum DHT11DataType {
+    //% block="temperature (°C)"
+    Temperature = 0,
+    //% block="humidity (%)"
+    Humidity = 1
+}
+
+enum NeoPixelType {
+    //% block="1 LED"
+    Single = 1,
+    //% block="bar (7 LEDs)"
+    Bar = 7,
+    //% block="ring (12 LEDs)"
+    Ring = 12
+}
+
+//% weight=100 color="#FF5733" icon="\uf12e" block="ezmaker"
+namespace ezmaker {
 
     /**
      * Control the digital output of the specified pin.
@@ -139,19 +169,6 @@ namespace EZMAKER {
     // =========================================================================
     // 2. Basic Sensors
     // =========================================================================
-
-    export enum MQ2GasType {
-        //% block="LPG"
-        LPG = 0,
-        //% block="CO"
-        CO = 1,
-        //% block="Smoke"
-        Smoke = 2,
-        //% block="H2"
-        H2 = 3,
-        //% block="Propane"
-        Propane = 4
-    }
 
     /**
      * Measure the gas concentration (ppm) from the MQ2 gas sensor.
@@ -306,7 +323,7 @@ namespace EZMAKER {
     // 3. Temp & Humidity
     // =========================================================================
 
-    //% shim=EZMAKER::readMax31850
+    //% shim=ezmaker::readMax31850
     function readMax31850Shim(pin: number): number {
         return 25.5;
     }
@@ -361,7 +378,6 @@ namespace EZMAKER {
         lastDS18B20Port = <number>port;
 
         let temp = 0;
-        // Resolve to static literal pins to prevent simulator error: "parts failed to read pin(s) from callsite for: dstemp.celsius"
         switch (port) {
             case EZDigitalPin.P8:
                 temp = dstemp.celsius(DigitalPin.P8);
@@ -386,13 +402,6 @@ namespace EZMAKER {
 
         lastDS18B20Temp = Math.round(temp * 100) / 100;
         return lastDS18B20Temp;
-    }
-
-    export enum DHT11DataType {
-        //% block="temperature (°C)"
-        Temperature = 0,
-        //% block="humidity (%)"
-        Humidity = 1
     }
 
     let lastDHT11Time = -2000;
@@ -529,21 +538,11 @@ namespace EZMAKER {
     // 5. NeoPixel
     // =========================================================================
 
-    export enum NeoPixelType {
-        //% block="1 LED"
-        Single = 1,
-        //% block="bar (7 LEDs)"
-        Bar = 7,
-        //% block="ring (12 LEDs)"
-        Ring = 12
-    }
-
     let neopixelStrips: neopixel.Strip[] = [];
 
     function getNeoPixelStrip(pin: EZDigitalPin, type: NeoPixelType): neopixel.Strip {
         let p = <number>pin;
         if (!neopixelStrips[p]) {
-            // Resolve to static literal pins to prevent simulator error: "parts failed to read pin(s) from callsite for: neopixel.create"
             switch (pin) {
                 case EZDigitalPin.P8:
                     neopixelStrips[p] = neopixel.create(DigitalPin.P8, <number>type, NeoPixelMode.RGB);
@@ -657,12 +656,12 @@ namespace EZMAKER {
     //% block="bar neopixel on %pin : %c1 %c2 %c3 %c4 %c5 %c6 %c7"
     //% inlineInputMode=inline
     //% c1.shadow="colorNumberPicker" c1.defl=0xFF0000
-    //% c2.shadow="colorNumberPicker" c2.defl=0xFF7F00
+    //% c2.shadow="colorNumberPicker" c2.defl=0xFFA500
     //% c3.shadow="colorNumberPicker" c3.defl=0xFFFF00
     //% c4.shadow="colorNumberPicker" c4.defl=0x00FF00
     //% c5.shadow="colorNumberPicker" c5.defl=0x0000FF
-    //% c6.shadow="colorNumberPicker" c6.defl=0x4B0082
-    //% c7.shadow="colorNumberPicker" c7.defl=0x8A2BE2
+    //% c6.shadow="colorNumberPicker" c6.defl=0x4b0082
+    //% c7.shadow="colorNumberPicker" c7.defl=0x8a2be2
     //% pin.fieldEditor="gridpicker" pin.fieldOptions.columns=3
     //% weight=86
     //% subcategory="NeoPixel"

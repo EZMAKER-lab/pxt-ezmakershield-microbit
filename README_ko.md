@@ -45,8 +45,8 @@
 ## 예제 코드
 
 ```blocks
-EZmaker.showNeopixelWrapper(EZmaker.AnalogPins.P8, 255, 0, 0)
-basic.showNumber(EZmaker.readAnalogSensor(EZmaker.AnalogPins.P0))
+ezmaker.setNeoPixelColorAll(NeoPixelType.Single, EZDigitalPin.P8, 0xff0000)
+basic.showNumber(ezmaker.readDIYARaw(EZAnalogPin.P0))
 ```
 
 ---
